@@ -19,30 +19,31 @@ void setup() {
 void loop() {
 draw();
    while (1) {
-      // for (int i = 0; i < 4; ++i) {
-      //    cube[0][i] ^= true;
-      //    draw();
-      //    delay(50);
-      // }
-      // for(int j=1; j<4; j++){
-      //     cube[j][3] ^= true;
-      //     draw();
-      //     delay(50);
-      // }
-      // for(int k=2; k>=0; k--){
-      //     cube[3][k] ^= true; 
-      //     draw();
-      //     delay(50);
-      // }
-      // for(int i=2; i>0; i--){
-      //     cube[i][0] ^= true;
-      //     draw();
-      //     delay(50);
-      // }
-      cube[rand() % 4] [rand() %4] ^= true;
-      draw();
-      delay(150);
+      for (int i = 0; i < 4; ++i) {
+         cube[0][i][0] ^= true;
+         cube[0][i][1] ^= true;
+         draw();
+         delay(50);
       }
+      for(int j=1; j<4; j++){
+          cube[j][3][0] ^= true;
+          cube[j][3][1] ^= true;
+          draw();
+          delay(50);
+      }
+      for(int k=2; k>=0; k--){
+          cube[3][k][0] ^= true;
+          cube[3][k][1] ^= true;
+          draw();
+          delay(50);
+      }
+      for(int i=2; i>0; i--){
+          cube[i][0][0] ^= true;
+          cube[3][k][1] ^= true;
+          draw();
+          delay(50);
+      }
+
 
 }
 
@@ -84,3 +85,4 @@ void draw() {
 // }
 
  // }
+
