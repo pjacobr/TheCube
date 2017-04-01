@@ -41,18 +41,11 @@ void setup(void) {
 }
 
 void loop(void) {
-   for (uint8_t i = 1; i <= BRIGHTNESS_DEGREES; i+=2) {
-      leds[0] = i;
-      leds[1] = BRIGHTNESS_DEGREES - i + 1;
-      delay(10);
+   for (uint8_t counter = 0;  counter < 245; ++counter) {
+      leds[0] = (sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
+      leds[1] = (-sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
+      delay(42);
    }
-   delay(100);
-   for (uint8_t i = 1; i <= BRIGHTNESS_DEGREES; i+=2) {
-      leds[0] = BRIGHTNESS_DEGREES - i + 1;
-      leds[1] = i;
-      delay(10);
-   }
-   delay(100);
 }
 
 inline void draw(uint8_t counter) {
