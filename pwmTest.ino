@@ -4,7 +4,7 @@
 #define LED2_PORT PORTB
 #define PORTB_MASK 0b11                      // what ports are being used
 
-#define LED_FLICKER_RATE 60
+#define LED_FLICKER_RATE 60                  // flicker at rate of 60Hz
 #define BRIGHTNESS_DEGREES 64
 
 #define TIMER1_PRESCALER 64
@@ -12,9 +12,6 @@
 
 // =============================== GLOBAL VARIABLES ============================== //
 uint8_t leds[2] = {0};
-
-
-
 
 // ================================ BEGIN PROGRAM ================================ //
 
@@ -35,28 +32,28 @@ void setup(void) {
 
    PORTB &= ~(PORTB_MASK);                   // turn off all LEDs at beginning
    DDRB |= PORTB_MASK;                       // set ports 8 and 9 as outputs
-  // LED1_PORT |= LED1_MASK;                   // stagger which LED is on
 
    interrupts();                             // enable all interrupts
 }
 
 void loop(void) {
-   for (uint8_t counter = 0;  counter < 245; ++counter) {
+  // 710 is VERY close (.00000959 error) to a multiple of 2*PI so the function will look uninterrupted
+   for (uint16_t counter = 0;  counter < 710; ++counter) {
       leds[0] = (sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
       leds[1] = (-sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
       delay(42);
    }
 }
 
-inline void draw(uint8_t counter) {
-   if (counter >= (BRIGHTNESS_DEGREES - leds[0])) {
+inline void draw(int pwmValue) {
+   if (pwmValue >= (BRIGHTNESS_DEGREES - leds[0])) {
       if (!(LED1_PORT & LED1_MASK)) LED1_PORT |= LED1_MASK;
    }
    else {
       if (LED1_PORT & LED1_MASK) LED1_PORT &= ~LED1_MASK;
    }
 
-   if (counter >= (BRIGHTNESS_DEGREES - leds[1])) {
+   if (pwmValue >= (BRIGHTNESS_DEGREES - leds[1])) {
       if (!(LED2_PORT & LED2_MASK)) LED2_PORT |= LED2_MASK;
    }
    else {
@@ -65,7 +62,7 @@ inline void draw(uint8_t counter) {
 }
 
 ISR(TIMER1_COMPA_vect) {
-   static uint8_t pwmCounter = 0;
+   static int pwmCounter = 0;
    draw(pwmCounter);
   if (++pwmCounter == BRIGHTNESS_DEGREES) pwmCounter = 0;
 }
