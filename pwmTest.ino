@@ -4,11 +4,18 @@
 #define LED2_PORT PORTB
 #define PORTB_MASK 0b11                      // what ports are being used
 
-#define LED_FLICKER_RATE 60                  // flicker at rate of 60Hz
+#define LED_FLICKER_RATE 75                  // flicker at rate of 75Hz
 #define BRIGHTNESS_DEGREES 64
 
 #define TIMER1_PRESCALER 64
 #define CLOCK 16000000
+
+#define SIN_FUNCTION_PERIOD 12.0             // must be less or equal to than 2^16 / 710 or 92
+
+#define LIGHT_CHANGE_FREQUENCY 24            // change brightness of LEDs every 24Hz
+
+// (1000ms / frequency) to get delay
+#define LIGHT_CHANGE_DELAY (1000 / LIGHT_CHANGE_FREQUENCY)
 
 // =============================== GLOBAL VARIABLES ============================== //
 uint8_t leds[2] = {0};
@@ -37,11 +44,12 @@ void setup(void) {
 }
 
 void loop(void) {
-  // 710 (7100 / 10.0) is VERY close (.00000959 error) to a multiple of 2*PI so the function will look uninterrupted
-   for (uint16_t counter = 0;  counter < 7100; ++counter) {
-      leds[0] = (sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
-      leds[1] = (-sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
-      delay(42);
+  // 710 is VERY close (.00000959 error) to a multiple of 2*PI so the function will look uninterrupted
+   for (uint16_t counter = 0;  counter < SIN_FUNCTION_PERIOD * 710; ++counter) {
+      // makes the sin function in the range [0, 2], then multiply to [0, BRIGHTNESS_DEGREES]
+      leds[0] = (sin(counter / SIN_FUNCTION_PERIOD) + 1) * BRIGHTNESS_DEGREES / 2;
+      leds[1] = (-sin(counter / SIN_FUNCTION_PERIOD) + 1) * BRIGHTNESS_DEGREES / 2;
+      delay(LIGHT_CHANGE_DELAY);
    }
 }
 
@@ -64,5 +72,5 @@ inline void draw(int pwmValue) {
 ISR(TIMER1_COMPA_vect) {
    static int pwmCounter = 0;
    draw(pwmCounter);
-  if (++pwmCounter == BRIGHTNESS_DEGREES) pwmCounter = 0;
+   if (++pwmCounter == BRIGHTNESS_DEGREES) pwmCounter = 0;
 }
