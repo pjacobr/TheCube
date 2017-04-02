@@ -37,8 +37,8 @@ void setup(void) {
 }
 
 void loop(void) {
-  // 710 is VERY close (.00000959 error) to a multiple of 2*PI so the function will look uninterrupted
-   for (uint16_t counter = 0;  counter < 710; ++counter) {
+  // 710 (7100 / 10.0) is VERY close (.00000959 error) to a multiple of 2*PI so the function will look uninterrupted
+   for (uint16_t counter = 0;  counter < 7100; ++counter) {
       leds[0] = (sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
       leds[1] = (-sin(counter / 10.0) + 1) * BRIGHTNESS_DEGREES / 2;
       delay(42);
